@@ -1,4 +1,5 @@
-from datetime import datetime
+import uuid
+import datetime
 
 from passlib.context import CryptContext
 from sqlalchemy import Boolean, Column, Enum, ForeignKey
@@ -6,16 +7,9 @@ from sqlalchemy.orm import relationship
 from sqlalchemy.sql import sqltypes
 
 from . import constants
-from .factory import Base
+from .factory import BaseModel
 
-pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
-
-
-class BaseModel(Base):
-    __abstract__ = True
-    id = Column(sqltypes.Integer, primary_key=True, index=True, autoincrement=True)
-    created_at = Column(sqltypes.DATETIME, default=datetime.utcnow)
-    updated_at = Column(sqltypes.DATETIME, default=datetime.utcnow)
+pwd_context = CryptContext(schemes=["sha256_crypt"], deprecated="auto")
 
 
 class User(BaseModel):
@@ -27,11 +21,13 @@ class User(BaseModel):
     role = Column(Enum(constants.UserRole), default=constants.UserRole.CUSTOMER)
     is_active = Column(Boolean, default=True)
 
+    tokens = relationship("Token", back_populates="user")
+
     def save_password(self, password):
         self.hashed_password = pwd_context.hash(password)
 
     def varify_password(self, password):
-        return pwd_context.verify(self.hashed_password, password)
+        return pwd_context.verify(password, self.hashed_password)
 
 
 class Token(BaseModel):
@@ -39,6 +35,8 @@ class Token(BaseModel):
     user_id = Column(sqltypes.Integer, ForeignKey("users.id"))
     token = Column(sqltypes.String(30), index=True, nullable=False)
     expiry = Column(sqltypes.DATETIME, nullable=False)
+
+    user = relationship("User", back_populates="tokens")
 
 
 class Restaurant(BaseModel):
