@@ -7,6 +7,13 @@
 ```
 py main.py
 ```
+
+# Running Tests
+Run this command in the project folder or in the project's virtual environment
+```
+pytest
+```
+
 # Group information
 * Student 1. Mahdi Mehrpour Moghadam mmehrpou23@student.oulu.fi
 * Student 2. Mohamadreza Sadeghi msadeghi23@student.oulu.fi
