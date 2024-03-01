@@ -5,8 +5,8 @@ from pydantic import BaseModel
 
 class BaseSchema(BaseModel):
     id: int
-    created_at: datetime
-    updated_at: datetime
+    created_at: datetime = None
+    updated_at: datetime = None
 
 
 class LoginResponseSchema(BaseSchema):

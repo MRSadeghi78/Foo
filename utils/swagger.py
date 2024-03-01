@@ -12,7 +12,7 @@ def generate_custom_openapi():
         version="0.0.1",
         description="REST openapi specification",
         routes=app.routes,
-        servers=[{"url": "https://foo-backend.cognix.tech"}]
+        servers=[{"url": "http://127.0.0.1:8000"}]
     )
     openapi_schema["info"]["x-logo"] = {
         "url": "https://fastapi.tiangolo.com/img/logo-margin/logo-teal.png"
