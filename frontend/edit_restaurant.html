@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Edit Restaurant</title>
+</head>
+<body>
+    <h3>Fill in the required information:</h3>
+    <form id="restaurantForm">
+        <label for="name">Name:</label><br>
+        <input type="text" id="name" name="name"><br>
+        <label for="email">Email:</label><br>
+        <input type="email" id="email" name="email"><br>
+        <label for="mobile">Mobile:</label><br>
+        <input type="text" id="mobile" name="mobile"><br>
+        <label for="address">Address:</label><br>
+        <input type="text" id="address" name="address"><br>
+        <label for="opening_time">Opening Time:</label><br>
+        <input type="text" id="opening_time" name="opening_time"><br>
+        <label for="closing_time">Closing Time:</label><br>
+        <input type="text" id="closing_time" name="closing_time"><br><br>
+        <button type="submit">Submit</button>
+    </form>
+
+    <script src="scripts.js"></script>
+    <script>
+        // Attach event listener to the form submission
+        document.getElementById("restaurantForm").addEventListener("submit", submitRestaurantForm);
+    </script>
+</body>
+</html>

@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Restaurant</title>
+</head>
+<body>
+    <h3>Restaurant Information</h3>
+    <div id="restaurantInfo"></div>
+    <button id="editRestaurant">Edit Information</button>
+    <button id="showItems">Show Foods</button>
+    
+    <script src="scripts.js"></script>
+    <script>
+        // Call your function after the page loads
+        window.addEventListener("load", function() {
+            getResaurant();
+        });
+        
+        document.getElementById("editRestaurant").addEventListener("click", function() { window.location.href = "edit_restaurant.html"; });
+        document.getElementById("showItems").addEventListener("click", function() { window.location.href = "items.html"; });
+    </script>
+</body>
+</html>

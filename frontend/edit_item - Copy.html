@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Create Food</title>
+</head>
+<body>
+    <h3>Fill in the required information:</h3>
+    <form id="itemForm">
+        <label for="name">Name:</label><br>
+        <input type="text" id="name" name="name"><br>
+        <label for="description">Description:</label><br>
+        <input type="text" id="description" name="description"><br>
+        <label for="cost">Cost:</label><br>
+        <input type="number" id="cost" name="cost"><br>
+        <label for="price">Price:</label><br>
+        <input type="number" id="price" name="price"><br>
+        <label for="is_active">Active:</label><br>
+        <input type="checkbox" id="is_active" name="is_active"><br>
+        <button type="submit">Submit</button>
+    </form>
+
+    <script src="scripts.js"></script>
+    <script>
+        // Attach event listener to the form submission
+        document.getElementById("itemForm").addEventListener("submit", submitItemCreate);
+    </script>
+</body>
+</html>
