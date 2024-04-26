@@ -1,6 +1,7 @@
 from datetime import datetime
 
-from pydantic import BaseModel
+from pydantic import BaseModel, computed_field
+from typing import Dict
 
 
 class BaseSchema(BaseModel):
@@ -31,6 +32,13 @@ class RestaurantResponseSchema(BaseSchema):
     class Config:
         from_attributes = True
 
+    @computed_field
+    def links(self) -> Dict[str, str]:
+        return {
+            "self": f"/api/restaurant/",
+            "items-collection": f"/api/items/{self.restaurant_id}/"
+        }
+
 
 class ItemResponseSchema(BaseSchema):
     restaurant_id: int
@@ -43,3 +51,11 @@ class ItemResponseSchema(BaseSchema):
 
     class Config:
         from_attributes = True
+
+    @computed_field
+    def links(self) -> Dict[str, str]:
+        return {
+            "self": f"/api/items/{self.id}/",
+            "items-collection": f"/api/items/{self.restaurant_id}/",
+            "restaurant": f"/api/restaurant/"
+        }
