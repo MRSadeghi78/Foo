@@ -68,11 +68,15 @@ function generateItemstHtml(items) {
 
     // Create a paragraph element for each piece of store information and append it to the info div
     items.forEach(item => {
+        // var itemDiv = document.createElement("div");
+        var itemDivContainer = document.createElement("div");
+        itemDivContainer.classList.add("col-md-4");
         var itemDiv = document.createElement("div");
+        itemDiv.classList.add("item");
 
         for (var key in item) {
             if (item.hasOwnProperty(key)) {
-                if (key === "id")
+                if (key === "id" || key === "image")
                     continue;
                 else if (key === "name")
                     var paragraph = document.createElement("h3");
@@ -82,35 +86,29 @@ function generateItemstHtml(items) {
                 itemDiv.appendChild(paragraph);
             }
         }
-
+        
         // Create the edit food button
         var editButton = document.createElement("button");
         editButton.textContent = "Edit";
+        editButton.classList.add("btn");
+        editButton.classList.add("btn-primary");
         editButton.addEventListener("click", () => { window.location.href = "edit_item.html"; });
-
+        
         // Create the delete food button
         var deleteButton = document.createElement("button");
         deleteButton.textContent = "Delete";
+        deleteButton.classList.add("btn");
+        deleteButton.classList.add("btn-danger");
         deleteButton.addEventListener("click", () => { deleteFood(item.id); });
         
         // Append the created buttons to their respective parent div
         itemDiv.appendChild(editButton);
         itemDiv.appendChild(deleteButton);
+        
+        itemDivContainer.appendChild(itemDiv);
 
-        // Add a line to the end of this food section
-        var line = document.createElement("hr");
-        itemDiv.appendChild(line);
-
-        itemsDiv.appendChild(itemDiv);
+        itemsDiv.appendChild(itemDivContainer);
     });
-    
-    // Add a button to the end of the page to create new food
-    var createButton = document.createElement("button");
-    createButton.textContent = "Create new Food";
-    createButton.addEventListener("click", () => { window.location.href = "create_item.html"; });
-
-    // Add this button to the html body
-    document.body.appendChild(createButton);
 }
 
 
@@ -131,8 +129,17 @@ function getItems() {
             id: 2,
             name: "second Food",
             description: "This food is made from this and that",
-            cost: 10,
-            price: 15,
+            cost: 14,
+            price: 24,
+            is_active: true,
+            image: ""
+        },
+        {
+            id: 3,
+            name: "third Food",
+            description: "This food is made from this and that",
+            cost: 20,
+            price: 30,
             is_active: true,
             image: ""
         }
