@@ -4,6 +4,13 @@ from fastapi.openapi.utils import get_openapi
 
 
 def generate_custom_openapi():
+    """
+        Generates a custom OpenAPI schema for the FastAPI application.
+
+        Retrieves the existing schema if available, otherwise generates a new one based on the application routes.
+
+        :return: Custom OpenAPI schema for the FastAPI application.
+    """
     from main import app
     if app.openapi_schema:
         return app.openapi_schema
@@ -31,6 +38,12 @@ def generate_custom_openapi():
 
 
 def generate_form_input(model_cls):
+    """
+        Generates form input for a given Pydantic model class.
+
+        :param model_cls: Pydantic model class.
+        :return: Form input schema for the given model class.
+    """
     properties = {}
     json_schema = ast.literal_eval(model_cls.schema_json())
     for item in json_schema["properties"]:

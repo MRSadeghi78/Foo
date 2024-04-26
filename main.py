@@ -14,11 +14,25 @@ app.openapi = swagger.generate_custom_openapi
 
 @app.on_event("startup")
 def on_startup():
+    """
+        Function executed on application startup.
+
+        This function creates all database tables defined in the Base metadata binding to the engine.
+    """
     Base.metadata.create_all(bind=engine)
 
 
 @app.get("/")
 async def root(db: Session = Depends(get_db)):
+    """
+       Root endpoint of the API.
+
+       This endpoint creates a user in the database on the first call.
+       If the user already exists, it simply returns a greeting message.
+
+       :param db: Database session.
+       :return: Greeting message.
+    """
     try:
         helper.create_user(db)
     except Exception as e:
@@ -31,6 +45,17 @@ async def login(
         data: schema.LoginSchema,
         db: Session = Depends(get_db)
 ) -> responses.LoginResponseSchema:
+    """
+       Endpoint for user login.
+
+       This endpoint authenticates a user by email and password.
+       If authentication is successful, it returns a token response schema.
+       Otherwise, it raises a 400 HTTPException with a message indicating invalid credentials.
+
+       :param data: Login credentials.
+       :param db: Database session.
+       :return: Token response schema.
+    """
     user = crud.get_user_by_email(db, data.email)
     if user and user.varify_password(data.password):
         token = crud.add_token(db, user.id)
@@ -42,6 +67,15 @@ async def login(
 async def get_restaurant(
         context: auth_utils.CustomContext = Depends(auth_utils.get_current_user)
 ) -> responses.RestaurantResponseSchema:
+    """
+        Endpoint to retrieve restaurant details.
+
+        This endpoint retrieves details of the restaurant associated with the authenticated user.
+        If no restaurant is found, it raises a 404 HTTPException.
+
+        :param context: Custom context containing user information.
+        :return: Restaurant response schema containing restaurant details.
+    """
     restaurant = crud.get_restaurant(context.db, context.user.id)
     if not restaurant:
         raise HTTPException(status_code=404, detail="No data found")
@@ -53,6 +87,17 @@ async def update_restaurant(
         request: Request,
         context: auth_utils.CustomContext = Depends(auth_utils.get_current_user)
 ) -> responses.RestaurantResponseSchema:
+    """
+        Endpoint to update restaurant details.
+
+        This endpoint allows the authenticated user to update their restaurant details.
+        It expects a form containing restaurant data. Upon successful update, it returns the updated restaurant details.
+        If the provided data is invalid, it raises a 400 HTTPException.
+
+        :param request: Request object containing form data.
+        :param context: Custom context containing user information.
+        :return: Updated restaurant response schema.
+    """
     form = await request.form()
     try:
         data = schema.RestaurantSchema(**form)
@@ -68,6 +113,17 @@ async def get_items(
         restaurant_id: int,
         context: auth_utils.CustomContext = Depends(auth_utils.get_current_user)
 ) -> list[responses.ItemResponseSchema]:
+    """
+        Endpoint to retrieve items for a specific restaurant.
+
+        This endpoint retrieves items associated with the specified restaurant ID.
+        It expects an authenticated user and returns a list of item response schemas.
+        If no items are found for the given restaurant ID, an empty list is returned.
+
+        :param restaurant_id: ID of the restaurant.
+        :param context: Custom context containing user information.
+        :return: List of item response schemas.
+    """
     items = crud.get_items(context.db, restaurant_id)
     return parse_obj_as(List[responses.ItemResponseSchema], items)
 
@@ -77,6 +133,18 @@ async def create_item(
         request: Request,
         context: auth_utils.CustomContext = Depends(auth_utils.get_current_user)
 ) -> responses.ItemResponseSchema:
+    """
+        Endpoint to create a new item.
+
+        This endpoint allows an authenticated user to create a new item.
+        It expects form data containing item details.
+        Upon successful creation, it returns the created item response schema.
+        If the provided data is invalid, it raises a 400 HTTPException.
+
+        :param request: Request object containing form data.
+        :param context: Custom context containing user information.
+        :return: Created item response schema.
+    """
     form = await request.form()
     try:
         data = schema.CreateItemSchema(**form)
@@ -92,6 +160,19 @@ async def update_item(
         item_id: int, request: Request,
         context: auth_utils.CustomContext = Depends(auth_utils.get_current_user)
 ) -> responses.ItemResponseSchema:
+    """
+       Endpoint to update an existing item.
+
+       This endpoint allows an authenticated user to update an existing item.
+       It expects form data containing updated item details.
+       Upon successful update, it returns the updated item response schema.
+       If the provided data is invalid or the item is not found, it raises a 400 or 404 HTTPException respectively.
+
+       :param item_id: ID of the item to be updated.
+       :param request: Request object containing form data.
+       :param context: Custom context containing user information.
+       :return: Updated item response schema.
+    """
     form = await request.form()
     try:
         data = schema.UpdateItemSchema(**form)
@@ -109,6 +190,17 @@ async def delete_item(
         item_id: int,
         context: auth_utils.CustomContext = Depends(auth_utils.get_current_user)
 ) -> Any:
+    """
+        Endpoint to delete an existing item.
+
+        This endpoint allows an authenticated user to delete an existing item by its ID.
+        Upon successful deletion, it returns a success message.
+        If the item is not found, it raises a 404 HTTPException.
+
+        :param item_id: ID of the item to be deleted.
+        :param context: Custom context containing user information.
+        :return: Success message upon deletion.
+    """
     is_success = crud.delete_item(context.db, item_id)
     if is_success:
         return {"detail": "Item deleted successfully"}
@@ -119,6 +211,16 @@ async def delete_item(
 async def get_location(
         request: Request
 ) -> Any:
+    """
+        Endpoint to retrieve location data based on IP address.
+
+        This endpoint retrieves location data based on the client's IP address.
+        If the location data is available, it is returned.
+        If the auxiliary service is unavailable, it raises a 503 HTTPException.
+
+        :param request: Request object containing client's IP address.
+        :return: Location data if available.
+    """
     ip_address = auxiliary_service.get_client_ip(request)
     data = auxiliary_service.ip_to_location(ip_address)
     if data:
