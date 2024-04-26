@@ -3,8 +3,10 @@ import requests
 
 def ip_to_location(ip_address):
     """
-    :param ip_address:
-    :return:
+        Retrieves location information based on the provided IP address using a public API.
+
+        :param ip_address: IP address for which location information is to be retrieved.
+        :return: Location information in JSON format, or None if retrieval fails.
     """
     try:
         response = requests.get("http://ip-api.com/json/" + ip_address)
@@ -15,6 +17,12 @@ def ip_to_location(ip_address):
 
 
 def get_client_ip(request) -> str:
+    """
+        Retrieves the client's IP address from the request headers.
+
+        :param request: Request object representing the incoming HTTP request.
+        :return: Client's IP address as a string.
+    """
     x_real_ip = request.headers.get("X-Real-IP")
     x_forwarded_for = request.headers.get("X-Forwarded-For")
     if x_real_ip:
