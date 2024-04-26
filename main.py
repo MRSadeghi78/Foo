@@ -1,16 +1,12 @@
-import uuid
-from typing import List, Any, Annotated
+from typing import List, Any
 
-from fastapi import FastAPI, Depends, HTTPException, Request, Body, Form, UploadFile, File
-from fastapi.openapi.utils import get_openapi
-from fastapi.security import OAuth2PasswordBearer
-from fastapi.responses import JSONResponse
-from pydantic import ValidationError, parse_obj_as, BaseModel
+from fastapi import FastAPI, Depends, HTTPException, Request
+from pydantic import ValidationError, parse_obj_as
 from sqlalchemy.orm import Session
 
-from utils import auth_utils, image_utils, responses, swagger
-from database import schema, crud, helper, models
+from database import schema, crud, helper
 from database.factory import engine, Base, get_db
+from utils import auth_utils, image_utils, responses, swagger, auxiliary_service
 
 app = FastAPI()
 app.openapi = swagger.generate_custom_openapi
@@ -117,3 +113,14 @@ async def delete_item(
     if is_success:
         return {"detail": "Item deleted successfully"}
     raise HTTPException(status_code=404, detail="Item not found")
+
+
+@app.get("/location/")
+async def get_location(
+        request: Request
+) -> Any:
+    ip_address = auxiliary_service.get_client_ip(request)
+    data = auxiliary_service.ip_to_location(ip_address)
+    if data:
+        return data
+    raise HTTPException(status_code=503, detail="Auxiliary service is not available")
