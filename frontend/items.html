@@ -23,6 +23,7 @@
         <h2>Foods</h2>
         <div id="items" class="row"></div>
         <button id="createItem" class="btn btn-success">Create new Food</button>
+        <button id="deleteAllItems" class="btn btn-danger">Delete All Foods</button>
     </div>
 
     <script src="scripts.js"></script>
@@ -33,6 +34,7 @@
         });
 
         document.getElementById("createItem").addEventListener("click", function() { window.location.href = "create_item.html"; });
+        document.getElementById("deleteAllItems").addEventListener("click", deleteAllItems);
     </script>
 
     <!-- Bootstrap JS and dependencies -->
