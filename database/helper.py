@@ -5,6 +5,15 @@ from database.constants import UserRole
 
 
 def create_user(db: Session):
+    """
+       Creates a user with admin privileges.
+
+       This function creates a user with predefined admin credentials, including name, email, and password.
+       The created user is then added to the database.
+
+       :param db: Database session.
+       :return: User object representing the created admin user.
+    """
     db_user = models.User(
         name='Mr. Admin', email="admin@admin.com",
         hashed_password="", role=UserRole.ADMIN
