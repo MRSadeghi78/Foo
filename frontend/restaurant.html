@@ -24,7 +24,11 @@
             <button id="editRestaurant" class="btn btn-primary mr-2">Edit Information</button>
             <button id="showItems" class="btn btn-secondary">Show Foods</button>
         </div>
+        <div class="text-center">
+            <footer id="location"></footer>
+        </div>
     </div>
+    
 
     <!-- Bootstrap JS and dependencies -->
     <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
@@ -35,6 +39,7 @@
         // Call your function after the page loads
         window.addEventListener("load", function() {
             getResaurant();
+            getLocation();
         });
         
         document.getElementById("editRestaurant").addEventListener("click", function() { window.location.href = "edit_restaurant.html"; });

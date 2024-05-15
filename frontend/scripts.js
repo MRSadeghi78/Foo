@@ -383,3 +383,36 @@ function deleteAllItems() {
     });
 }
 
+
+
+
+function getLocation() {
+
+    var locationDiv = document.getElementById("location");
+
+    var request = {
+        method: 'GET',
+        headers: {
+            'Content-Type': 'application/json'
+        }
+    };
+
+    fetch(serverURL + 'location/', request)
+    .then(response => {
+        if (response.ok) {
+            return response.json();
+        }
+        return Promise.reject(response); 
+    })
+    .then(data=>{
+        console.log(data);
+        locationDiv.innerHTML = `
+            <p>Your IP is: ${data.query} and your location is: ${data.city}, ${data.country} </p>
+        `;
+    }).catch((response) => {
+        response.json().then(data=>{
+            alert("Error " + response.status + ": " + data.detail);
+        })
+    });
+
+}

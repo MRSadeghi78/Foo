@@ -24,6 +24,9 @@
         <div id="items" class="row"></div>
         <button id="createItem" class="btn btn-success">Create new Food</button>
         <button id="deleteAllItems" class="btn btn-danger">Delete All Foods</button>
+        <div class="text-center">
+            <footer id="location"></footer>
+        </div>
     </div>
 
     <script src="scripts.js"></script>
@@ -31,6 +34,7 @@
         // Call your function after the page loads
         window.addEventListener("load", function() {
             getItems();
+            getLocation();
         });
 
         document.getElementById("createItem").addEventListener("click", function() { window.location.href = "create_item.html"; });
