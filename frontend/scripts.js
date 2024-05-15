@@ -1,5 +1,12 @@
 const serverURL = "https://foo-backend.cognix.tech/"
 
+/**
+ * Function to handle login form submission.
+ *
+ * This function gathers the login data from the form, constructs a POST request with the email and password,
+ * and sends it to the server. If the login is successful, the token is stored in local storage and the user
+ * is redirected to the restaurant page. If the login fails, an alert is shown with the error message.
+ */
 function submitLogin() {
     var loginData = new FormData(document.getElementById("loginForm"));
     var username = document.getElementById("email").value;
@@ -30,26 +37,20 @@ function submitLogin() {
         })
     });
 
-
-
 }
 
+/**
+ * Function to generate HTML content for restaurant information.
+ *
+ * This function takes restaurant information and updates the DOM to display the restaurant's details,
+ * including its logo, name, email, mobile number, address, opening and closing times, creation, and update timestamps.
+ *
+ * @param {Object} restaurantInfo - The information of the restaurant.
+ */
 function generateRestaurantHtml(restaurantInfo) {
     // Get the info div element
     var infoDiv = document.getElementById("restaurantInfo");
 
-    // // Create a paragraph element for each piece of store information and append it to the info div
-    // for (var key in restaurantInfo) {
-    //     if (restaurantInfo.hasOwnProperty(key)) {
-    //         if (key === "links" || key === "id" || key === "user_id")
-    //             continue;
-    //         var paragraph = document.createElement("p");
-    //         paragraph.textContent = key + ": " + restaurantInfo[key];
-    //         infoDiv.appendChild(paragraph);
-    //     }
-    // }
-
-    
     infoDiv.innerHTML = `
     <img style="max-height: 300px; width: auto;" src="${serverURL+restaurantInfo.logo}" class="card-img-top" alt="${restaurantInfo.name}">
     <div class="card-body">
@@ -66,6 +67,14 @@ function generateRestaurantHtml(restaurantInfo) {
 
     localStorage.setItem("restaurantId", restaurantInfo.id);
 }
+
+/**
+ * Function to fetch restaurant information from the server.
+ *
+ * This function sends a GET request to the server to retrieve the restaurant's information using the stored token
+ * for authorization. If the request is successful, it stores the restaurant ID and generates the HTML to display
+ * the restaurant information. If the request fails, it shows an alert with the error message.
+ */
 
 function getResaurant() {
     // TODO: get restaurant information from server
@@ -97,6 +106,15 @@ function getResaurant() {
       
 }
 
+/**
+ * Function to handle restaurant form submission.
+ *
+ * This function gathers the restaurant form data, constructs a PUT request with the form data, and sends it to the server.
+ * If the request is successful, it alerts the user and redirects them to the restaurant page. If the request fails,
+ * an alert is shown with the error message.
+ *
+ * @param {Event} event - The form submission event.
+ */
 
 function submitRestaurantForm(event) {
     event.preventDefault(); // Prevent default form submission
@@ -111,30 +129,6 @@ formData.append("opening_time", document.getElementById("opening_time").value);
 formData.append("closing_time", document.getElementById("closing_time").value);
 formData.append("logo", document.getElementById("logo").files[0], document.getElementById("logo").files[0].name);
 
-
-//     const body = new FormData()
-// body.append("name", "gg")
-// body.append("", "\\")
-// body.append("email", "b")
-// body.append("", "\\")
-// body.append("mobile", "bv")
-// body.append("", "\\")
-// body.append("address", "vv")
-// body.append("", "\\")
-// body.append("opening_time", "vv")
-// body.append("", "\\")
-// body.append("closing_time", "vv")
-// body.append("", "\\")
-// body.append("logo", "@SportBuddy.png;type=image/png")
-
-// fetch("https://foo-backend.cognix.tech/restaurant/", {
-//   body,
-//   headers: {
-//     Accept: "application/json",
-//     "Content-Type": "multipart/form-data"
-//   },
-//   method: "PUT"
-// })
   
     // TODO: Send form data to server
     var request = {
@@ -164,6 +158,15 @@ formData.append("logo", document.getElementById("logo").files[0], document.getEl
 
 }
 
+/**
+ * Function to delete an item/food from the restaurant.
+ *
+ * This function sends a DELETE request to the server to remove an item/food from the restaurant using the stored token
+ * for authorization. If the request is successful, it alerts the user and reloads the page. If the request fails,
+ * an alert is shown with the error message.
+ *
+ * @param {number} itemId - The ID of the item to be deleted.
+ */
 
 function deleteFood(itemId) {
     var request = {
@@ -191,6 +194,15 @@ function deleteFood(itemId) {
     });
 }
 
+/**
+ * Function to generate HTML content for a list of items.
+ *
+ * This function takes an array of item objects and updates the DOM to display each item's details,
+ * including its image, name, description, cost, price, and active status. It also includes buttons
+ * for editing and deleting each item.
+ *
+ * @param {Array<Object>} items - The array of item objects to be displayed.
+ */
 
 function generateItemstHtml(items) {
     // Get the info div element
@@ -243,6 +255,13 @@ function generateItemstHtml(items) {
     
 }
 
+/**
+ * Function to fetch items associated with a specific restaurant from the server.
+ *
+ * This function sends a GET request to the server to retrieve the items for the restaurant identified by the
+ * `temp_res_id` stored in local storage. If the request is successful, it generates the HTML to display the items.
+ * If the request fails, it shows an alert with the error message.
+ */
 
 function getItems() {
     var request = {
@@ -270,6 +289,15 @@ function getItems() {
 
 }
 
+/**
+ * Function to handle the submission of an item edit form.
+ *
+ * This function gathers the item edit form data, constructs a PUT request with the form data, and sends it to the server.
+ * If the request is successful, it alerts the user and redirects them to the items page. If the request fails,
+ * an alert is shown with the error message.
+ *
+ * @param {Event} event - The form submission event.
+ */
 
 function submitItemEdit(event) {
     event.preventDefault(); // Prevent default form submission
@@ -313,6 +341,15 @@ function submitItemEdit(event) {
 
 }
 
+/**
+ * Function to handle the submission of a new item creation form.
+ *
+ * This function gathers the item creation form data, constructs a POST request with the form data, and sends it to the server.
+ * If the request is successful, it alerts the user and redirects them to the items page. If the request fails,
+ * an alert is shown with the error message.
+ *
+ * @param {Event} event - The form submission event.
+ */
 
 function submitItemCreate(event) {
     event.preventDefault(); // Prevent default form submission
@@ -356,6 +393,13 @@ function submitItemCreate(event) {
 
 }
 
+/**
+ * Function to delete all items from the server.
+ *
+ * This function sends a DELETE request to the server to remove all items using the stored token for authorization.
+ * If the request is successful, it alerts the user and reloads the page. If the request fails, it shows an alert
+ * with the error message.
+ */
 
 function deleteAllItems() {
     var request = {
@@ -384,7 +428,13 @@ function deleteAllItems() {
 }
 
 
-
+/**
+ * Function to fetch and display the user's location based on their IP address.
+ *
+ * This function sends a GET request to the server to retrieve the user's location information.
+ * If the request is successful, it displays the user's IP address and location in the DOM.
+ * If the request fails, it shows an alert with the error message.
+ */
 
 function getLocation() {
 
