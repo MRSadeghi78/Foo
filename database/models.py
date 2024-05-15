@@ -1,12 +1,8 @@
-import uuid
-import datetime
-
 from passlib.context import CryptContext
-from sqlalchemy import Boolean, Column, Enum, ForeignKey
+from sqlalchemy import Boolean, Column, ForeignKey
 from sqlalchemy.orm import relationship
 from sqlalchemy.sql import sqltypes
 
-from . import constants
 from .factory import BaseModel
 
 pwd_context = CryptContext(schemes=["sha256_crypt"], deprecated="auto")
@@ -17,12 +13,11 @@ class User(BaseModel):
         Model representing a user.
 
         This class defines attributes for user data such as name, email, hashed_password,
-        role, and isActive. It also provides methods for password handling.
+        and isActive. It also provides methods for password handling.
 
         :ivar name: Name of the user.
         :ivar email: Email address of the user.
         :ivar hashed_password: Hashed password of the user.
-        :ivar role: Role of the user (default: CUSTOMER).
         :ivar is_active: Boolean indicating whether the user is active (default: True).
         :ivar tokens: Relationship with Token model.
     """
@@ -31,13 +26,11 @@ class User(BaseModel):
     name = Column(sqltypes.String(30), nullable=False)
     email = Column(sqltypes.String(50), unique=True, index=True)
     hashed_password = Column(sqltypes.String, nullable=False)
-    role = Column(Enum(constants.UserRole), default=constants.UserRole.CUSTOMER)
     is_active = Column(Boolean, default=True)
 
     tokens = relationship("Token", back_populates="user")
 
     def save_password(self, password):
-
         """
             Hashes and saves the user's password.
 
@@ -45,17 +38,14 @@ class User(BaseModel):
         """
         self.hashed_password = pwd_context.hash(password)
 
+    def varify_password(self, password):
+        """
+            Verifies the provided password against the stored hashed password.
 
-def varify_password(self, password):
-
-
-    """
-        Verifies the provided password against the stored hashed password.
-
-        :param password: Password to be verified.
-        :return: True if the password matches, otherwise False.
-    """
-    return pwd_context.verify(password, self.hashed_password)
+            :param password: Password to be verified.
+            :return: True if the password matches, otherwise False.
+        """
+        return pwd_context.verify(password, self.hashed_password)
 
 
 class Token(BaseModel):

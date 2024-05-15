@@ -1,7 +1,7 @@
 from datetime import datetime
+from typing import Dict
 
 from pydantic import BaseModel, computed_field
-from typing import Dict
 
 
 class BaseSchema(BaseModel):
@@ -74,7 +74,7 @@ class RestaurantResponseSchema(BaseSchema):
         """
         return {
             "self": f"/api/restaurant/",
-            "items-collection": f"/api/items/{self.restaurant_id}/"
+            "items-collection": f"/api/items/{self.id}/"
         }
 
 

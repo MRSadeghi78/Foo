@@ -1,9 +1,8 @@
-from enum import Enum
 from datetime import datetime
-from typing import Optional
+from enum import Enum
 
 from fastapi import UploadFile
-from pydantic import BaseModel, Field
+from pydantic import BaseModel
 
 
 class BaseSchema(BaseModel):
@@ -29,12 +28,10 @@ class UserSchema(BaseSchema):
 
         :ivar name: Name of the user.
         :ivar email: Email address of the user.
-        :ivar role: Role of the user.
         :ivar is_active: Boolean indicating whether the user is active.
     """
     name: str
     email: str
-    role: Enum
     is_active: bool
 
 

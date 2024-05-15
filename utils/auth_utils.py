@@ -1,10 +1,10 @@
-from typing import Optional
+"""Python 3.11"""
+import typing
 
 from fastapi import Depends, HTTPException, Request
 from sqlalchemy.orm import Session
 
-from database import crud
-from database.factory import get_db
+from database import crud, factory, schema
 from database.schema import UserSchema
 
 
@@ -12,14 +12,15 @@ class CustomContext:
     """
     Custom context class used for dependency injection.
 
-    This class is used to provide context containing user information and database session to route functions.
+    This class is used to provide context containing user information
+    and database session to route functions.
 
     Args:
         user (UserSchema): The user information associated with the current request.
         db (Session): The database session associated with the current request.
     """
 
-    def __init__(self, user: UserSchema, db: Session):
+    def __init__(self, user: schema.UserSchema, db: Session):
         """
         Initializes the CustomContext instance with user information and database session.
 
@@ -27,18 +28,27 @@ class CustomContext:
             user (UserSchema): The user information associated with the current request.
             db (Session): The database session associated with the current request.
         """
-        self.user = user
-        self.db = db
+        self._user = user
+        self._db = db
+
+    @property
+    def user(self):
+        return self._user
+
+    @property
+    def db(self):
+        return self._db
 
 
 async def get_token(request: Request):
     """
-         Retrieves the authorization token from the request headers.
+    Retrieves the authorization token from the request headers.
 
-        :param request: Request object representing the incoming HTTP request.
-        :return: Authorization token extracted from the request headers, or None if no valid token is found.
+    :param request: Request object representing the incoming HTTP request.
+    :return: Authorization token extracted from the request headers,
+    or None if no valid token is found.
     """
-    authorization: Optional[str] = request.headers.get("Authorization")
+    authorization: typing.Optional[str] = request.headers.get("Authorization")
     scheme, token = authorization.split() if authorization else (None, None)
     if scheme and scheme.lower() != "token":
         return None
@@ -62,7 +72,9 @@ async def verify_token(db, token_str):
     return token.user
 
 
-async def get_current_user(db: Session = Depends(get_db), token_str=Depends(get_token), ) -> CustomContext:
+async def get_current_user(
+        db: Session = Depends(factory.get_db), token_str=Depends(get_token),
+) -> CustomContext:
     """
       Retrieves the current user based on the provided authorization token.
 

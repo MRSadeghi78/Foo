@@ -26,6 +26,7 @@ def get_user_by_token(db: Session, token_str: str):
         :param token_str: Token string associated with the user.
         :return: User object if found, otherwise None.
     """
+    # noinspection PyTypeChecker
     return db.query(models.Token).filter(models.Token.token == token_str).first()
 
 
@@ -37,6 +38,7 @@ def get_user_by_email(db: Session, email: str):
         :param email: Email address of the user to retrieve.
         :return: User object if found, otherwise None.
     """
+    # noinspection PyTypeChecker
     return db.query(models.User).filter(models.User.email == email).first()
 
 
@@ -61,6 +63,7 @@ def add_token(db: Session, user_id: int):
        :param user_id: ID of the user for whom the token is being added.
        :return: Token object.
     """
+    # noinspection PyTypeChecker
     token = db.query(models.Token).filter(
         models.Token.user_id == user_id,
         models.Token.expiry > datetime.datetime.utcnow()
@@ -86,7 +89,21 @@ def get_restaurant(db: Session, user_id: int):
         :param user_id: ID of the user owning the restaurant.
         :return: Restaurant object if found, otherwise None.
     """
+    # noinspection PyTypeChecker
     return db.query(models.Restaurant).filter(models.Restaurant.user_id == user_id).first()
+
+
+# Restaurant related operation
+def get_restaurant_by_id(db: Session, restaurant_id: int):
+    """
+        Retrieves a restaurant by restaurant ID.
+
+        :param db: Database session.
+        :param restaurant_id: ID of the restaurant.
+        :return: Restaurant object if found, otherwise None.
+    """
+    # noinspection PyTypeChecker
+    return db.query(models.Restaurant).filter(models.Restaurant.id == restaurant_id).first()
 
 
 def update_restaurant(db: Session, user_id: int, data: schema.RestaurantSchema):
@@ -98,6 +115,7 @@ def update_restaurant(db: Session, user_id: int, data: schema.RestaurantSchema):
         :param data: Data to update or create the restaurant.
         :return: Updated or created restaurant object.
     """
+    # noinspection PyTypeChecker
     restaurant = db.query(models.Restaurant).filter(models.Restaurant.user_id == user_id).first()
     if restaurant:
         for key, value in data.dict().items():
@@ -119,6 +137,7 @@ def get_items(db: Session, restaurant_id: int):
         :param restaurant_id: ID of the restaurant.
         :return: List of item objects.
     """
+    # noinspection PyTypeChecker
     return db.query(models.Item).filter(models.Item.restaurant_id == restaurant_id).all()
 
 
@@ -146,6 +165,7 @@ def update_item(db: Session, item_id: int, data: schema.UpdateItemSchema):
         :param data: Data to update the item.
         :return: Updated item object if found, otherwise None.
     """
+    # noinspection PyTypeChecker
     item = db.query(models.Item).filter(models.Item.id == item_id).first()
     if not item:
         return None
@@ -165,9 +185,24 @@ def delete_item(db: Session, item_id: int):
         :param item_id: ID of the item to delete.
         :return: True if item was deleted successfully, otherwise False.
     """
+    # noinspection PyTypeChecker
     item = db.query(models.Item).filter(models.Item.id == item_id).first()
     if not item:
         return False
     db.delete(item)
+    db.commit()
+    return True
+
+
+def delete_all_item(db: Session):
+    """
+        Deletes all the items.
+
+        :param db: Database session.
+        :return: True if all items were deleted successfully, otherwise False.
+    """
+    items = db.query(models.Item).all()
+    for item in items:
+        db.delete(item)
     db.commit()
     return True
