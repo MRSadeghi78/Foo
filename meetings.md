@@ -66,28 +66,52 @@ total
 
 
 
-## Meeting 3.
+## Meeting 3&4.
 * **DATE:**
+* 2024-04-18 @ 11:16
 * **ASSISTANTS:**
-
+Ivan Sanchez Milara
 ### Minutes
-*Summary of what was discussed during the meeting*
-
+discussed both 3rd and 4th deliverable such as wiki report problems documentation questions collaboration of teammates.
 ### Action points
-*List here the actions points discussed with assistants*
+. Wiki Report	1.0	5.0	
+	Resource Table	1.0	1.0	You need to add one additional PUT And one additional DELETE to meet requirmeents of the course
+	Addressability	0	1.5	No discussion
+	Uniform Interface	0	1.5	No discussion
+	Statelesness	0	1.0	No discussion
+2. Basic Implementation	1.5	10.0	
+	Project Structure	1.0	1.0	
+	Code Quality	0	2.0	Not checked linter
+	Documentation	0	1.0	No inline documentation
+	Instructions	0.5	1.0	
+	Test Coverage	0	3.0	Not tested
+	Implementation Works	0	2.0	Not tested
+3. Extras	3.0	6.0	
+	URL Converters	0	1.0	
+	Schema Validation	1.0	1.0	
+	Caching	0	2.0	
+	Authentication	2.0	2.0	
+5.5	21.0	
+1. Documentation	5.25	6.5	
+	Documentation is valid	1.0	1.0	
+	Documentation structure	0.5	0.5	
+	Documentation coverage	0.5	1.0	Missing one put and one DELETE
+	Response examples	2.0	2.0	
+	Response codes	0.25	1.0	Lots of error codes missing
+	Request bodies	1.0	1.0	
+2. Hypermedia Design	2.0	4.0	
+	State diagram	1.0	2.0	Missing some link relations for creating item. Some more edit/delete are needed.
+	Custom link relations	0	1.0	Different link relation not justified
+	Connectedness	1.0	1.0	
+3. Hypermedia Implementation	0	7.5	
+	Implementation works	0	1.0	IMPORTATN ASPECT ABOUT COLLABORATION: Mohamadreza is focusing on the client, Mahdi and Nazmul should work a little bit more in the code (test, documentation , addig missing parts)
+	Testing coverage	0	1.5	
+	Link relations match design	0	2.0	
+	Control implementation	0	2.0	
+	Implementation quality	0	1.0	
+7.25	18.0	
 
 
-
-
-## Meeting 4.
-* **DATE:**
-* **ASSISTANTS:**
-
-### Minutes
-*Summary of what was discussed during the meeting*
-
-### Action points
-*List here the actions points discussed with assistants*
 
 
 
