@@ -1,23 +1,37 @@
+"""Python 3.11"""
 from typing import List, Any
 
 from fastapi import FastAPI, Depends, HTTPException, Request
+from fastapi.middleware.cors import CORSMiddleware
 from pydantic import ValidationError, parse_obj_as
+from sqlalchemy.exc import SQLAlchemyError
 from sqlalchemy.orm import Session
 
 from database import schema, crud, helper
 from database.factory import engine, Base, get_db
 from utils import auth_utils, image_utils, responses, swagger, auxiliary_service
 
+origins = [
+    "*"
+]
+
 app = FastAPI()
 app.openapi = swagger.generate_custom_openapi
+# noinspection PyTypeChecker
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=origins,
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"]
+)
 
 
 @app.on_event("startup")
 def on_startup():
     """
-        Function executed on application startup.
-
-        This function creates all database tables defined in the Base metadata binding to the engine.
+    Function executed on application startup.
+    This function creates all database tables defined in the Base metadata binding to the engine.
     """
     Base.metadata.create_all(bind=engine)
 
@@ -35,7 +49,7 @@ async def root(db: Session = Depends(get_db)):
     """
     try:
         helper.create_user(db)
-    except Exception as e:
+    except SQLAlchemyError:
         pass
     return {"msg": "Hello "}
 
@@ -82,18 +96,19 @@ async def get_restaurant(
     return responses.RestaurantResponseSchema.from_orm(restaurant)
 
 
-@app.post("/restaurant/", openapi_extra=swagger.generate_form_input(schema.RestaurantSchema))
+@app.put("/restaurant/", openapi_extra=swagger.generate_form_input(schema.RestaurantSchema))
 async def update_restaurant(
         request: Request,
         context: auth_utils.CustomContext = Depends(auth_utils.get_current_user)
 ) -> responses.RestaurantResponseSchema:
     """
-        Endpoint to update restaurant details.
+    Endpoint to update restaurant details.
 
-        This endpoint allows the authenticated user to update their restaurant details.
-        It expects a form containing restaurant data. Upon successful update, it returns the updated restaurant details.
-        If the provided data is invalid, it raises a 400 HTTPException.
+    This endpoint allows the authenticated user to update their restaurant details.
+    It expects a form containing restaurant data.
+    Upon successful update, it returns the updated restaurant details.
 
+    If the provided data is invalid, it raises a 400 HTTPException.
         :param request: Request object containing form data.
         :param context: Custom context containing user information.
         :return: Updated restaurant response schema.
@@ -104,7 +119,7 @@ async def update_restaurant(
         data.logo = image_utils.save_image(data.logo, 'logo')
         restaurant = crud.update_restaurant(context.db, context.user.id, data)
         return responses.RestaurantResponseSchema.from_orm(restaurant)
-    except ValidationError as e:
+    except ValidationError:
         raise HTTPException(status_code=400, detail="Invalid data")
 
 
@@ -124,6 +139,9 @@ async def get_items(
         :param context: Custom context containing user information.
         :return: List of item response schemas.
     """
+    restaurant = crud.get_restaurant_by_id(context.db, restaurant_id)
+    if not restaurant:
+        raise HTTPException(status_code=404, detail="Invalid Restaurant ID")
     items = crud.get_items(context.db, restaurant_id)
     return parse_obj_as(List[responses.ItemResponseSchema], items)
 
@@ -151,7 +169,7 @@ async def create_item(
         data.image = image_utils.save_image(data.image, 'image')
         item = crud.create_item(context.db, data)
         return responses.ItemResponseSchema.from_orm(item)
-    except ValidationError as e:
+    except ValidationError:
         raise HTTPException(status_code=400, detail="Invalid data")
 
 
@@ -166,7 +184,8 @@ async def update_item(
        This endpoint allows an authenticated user to update an existing item.
        It expects form data containing updated item details.
        Upon successful update, it returns the updated item response schema.
-       If the provided data is invalid or the item is not found, it raises a 400 or 404 HTTPException respectively.
+       If the provided data is invalid or the item is not found,
+       it raises a 400 or 404 HTTPException respectively.
 
        :param item_id: ID of the item to be updated.
        :param request: Request object containing form data.
@@ -181,8 +200,28 @@ async def update_item(
         if not item:
             raise HTTPException(status_code=404, detail="Item not found")
         return responses.ItemResponseSchema.from_orm(item)
-    except ValidationError as e:
+    except ValidationError:
         raise HTTPException(status_code=400, detail="Invalid data")
+
+
+@app.delete("/items/all/")
+async def delete_all_item(
+        context: auth_utils.CustomContext = Depends(auth_utils.get_current_user)
+) -> Any:
+    """
+        Endpoint to delete an existing item.
+
+        This endpoint allows an authenticated user to delete all the items from db.
+        Upon successful deletion, it returns a success message.
+        If the item is not found, it raises a 404 HTTPException.
+
+        :param context: Custom context containing user information.
+        :return: Success message upon deletion.
+    """
+    is_success = crud.delete_all_item(context.db)
+    if is_success:
+        return {"detail": "All items deleted successfully"}
+    raise HTTPException(status_code=500, detail="Error while deleting items")
 
 
 @app.delete("/items/{item_id}/")

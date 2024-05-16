@@ -1,3 +1,5 @@
+from json import JSONDecodeError
+
 import requests
 
 
@@ -12,7 +14,8 @@ def ip_to_location(ip_address):
         response = requests.get("http://ip-api.com/json/" + ip_address)
         if response.status_code == 200:
             return response.json()
-    except Exception as e:
+    except (requests.exceptions.RequestException, JSONDecodeError) as e:
+        print(e)
         return None
 
 
